@@ -1,8 +1,7 @@
 import frappe
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_roles():
-    all_roles = frappe.get_roles()
-    filtered_roles = [role for role in all_roles if frappe.get_value("Role", role, "is_custom") == 1]
-    return filtered_roles
+    custom_roles = frappe.get_all("Role", filters={"is_custom": 1}, fields=["name"])
+    return custom_roles
