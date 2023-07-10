@@ -12,9 +12,6 @@ def signup(username, email, password, full_name, role):
         if frappe.get_value("User", {"username": username}):
             raise ValidationError("Username is already in use.")
 
-        if frappe.get_value("User", {"full_name": full_name}):
-            raise ValidationError("Full name is already in use.")
-
         # Perform validation checks on the input data
         if not username or not email or not password or not full_name or not role:
             raise ValidationError('All fields are required.')
@@ -31,8 +28,10 @@ def signup(username, email, password, full_name, role):
         user.last_name = full_name.split(' ')[-1]
         user.new_password = password
         user.append_roles(role)
-        user.api_key = frappe.generate_hash(length=20)
-        user.api_secret = frappe.generate_hash(length=20)
+        user.enabled = 1
+        user.send_welcome_email = 0
+        user.api_key = frappe.generate_hash(length=15)
+        user.api_secret = frappe.generate_hash(length=15)
 
         user.insert(ignore_permissions=True)
 
